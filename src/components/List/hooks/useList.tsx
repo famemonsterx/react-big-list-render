@@ -109,10 +109,6 @@ export const useList = ({
   }, [last?.current, observer?.current])
 
   useEffect(() => {
-    console.log(firstIndex, lastIndex)
-  }, [firstIndex, lastIndex])
-
-  useEffect(() => {
     const options = {
       rootMargin: "0px",
       threshold: 1,
@@ -120,7 +116,6 @@ export const useList = ({
     };
     observer.current = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
-        console.log(entry)
         if (entry.isIntersecting && entry.target.id === last?.current?.id) {
           add(lastIndex+1)
         }
