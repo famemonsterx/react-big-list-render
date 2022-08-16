@@ -16,6 +16,7 @@ export const useList = ({
   const [items, setItems] = useState<ReactElement<HTMLLIElement>[]>([])
   const first = useRef<HTMLLIElement>(null)
   const last = useRef<HTMLLIElement>(null)
+  const container = useRef<HTMLUListElement>(null)
   const [firstIndex, setFirstIndex] = useState(0)
   const [lastIndex, setLastIndex] = useState(0)
   const observer = useRef<IntersectionObserver | null>(null)
@@ -64,32 +65,32 @@ export const useList = ({
   }
 
   const remove = (index: number) => {
-    setItems([...items]
-        .filter(item => getIdNumber(item?.props?.id) !== index)
-        .map((item) => {
-          const key = uuid()
-          if (index+1 === getIdNumber(item?.props.id)) {
-            if (index === firstIndex) {
-              const newId = firstIndex + 1
-              setFirstIndex(newId)
-              return (
-                <li ref={first} key={key} id={`list-${newId}`}>
-                  {renderItem(newId, key)}
-                </li>
-              )
-            } else {
-              const newId = lastIndex - 1
-              setLastIndex(newId)
-              return (
-                <li ref={last} key={key} id={`list-${newId}`}>
-                  {renderItem(newId, key)}
-                </li>
-              )
-            }
+    const newItems = items
+      .filter(item => getIdNumber(item?.props?.id) !== index)
+      .map((item) => {
+        const key = uuid()
+        if (index+1 === getIdNumber(item?.props.id)) {
+          if (index === firstIndex) {
+            const newId = firstIndex + 1
+            setFirstIndex(newId)
+            return (
+              <li ref={first} key={key} id={`list-${newId}`}>
+                {renderItem(newId, key)}
+              </li>
+            )
+          } else {
+            const newId = lastIndex - 1
+            setLastIndex(newId)
+            return (
+              <li ref={last} key={key} id={`list-${newId}`}>
+                {renderItem(newId, key)}
+              </li>
+            )
           }
-          return item
-        })
-    )
+        }
+        return item
+      })
+    setItems(newItems)
   }
 
   useEffect(() => {
@@ -116,10 +117,11 @@ export const useList = ({
     };
     observer.current = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
-        if (entry.isIntersecting && entry.target.id === last?.current?.id) {
+        console.log(entry, (Number(first.current?.offsetHeight) * -1))
+        if (entry.target.id === last.current?.id && entry.boundingClientRect.bottom <= Number(container?.current?.offsetHeight)) {
           add(lastIndex+1)
         }
-        // if (!entry.isIntersecting && entry.target.id === first?.current?.id) {
+        // if (entry.target.id === first.current?.id && entry.boundingClientRect.y <= -60) {
         //   console.log(firstIndex)
         //   remove(firstIndex)
         // }
@@ -130,5 +132,5 @@ export const useList = ({
     }
   })
 
-  return { items }
+  return { items, container }
 }

@@ -10,9 +10,9 @@ interface IList<T> {
 export const List = <T,>({
   renderItem, length
 }: IList<T>) => {
-  const { items, } = useList({ renderItem, length })
+  const { items, container } = useList({ renderItem, length })
   return (
-    <ul className={'list'}>
+    <ul className={'list'} ref={container}>
       {items}
     </ul>
   )
