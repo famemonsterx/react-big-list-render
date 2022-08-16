@@ -1,26 +1,16 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { List, ListItem } from "components";
+import { createListItems } from "utils";
 
-function App() {
+export const App = () => {
+  const items = createListItems()
+  const renderItem = (index: number, key: string) => {
+    return (
+      <ListItem item={items[index]} key={key} />
+    )
+  }
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className={'app'}>
+      <List length={items.length} renderItem={renderItem} />
     </div>
-  );
+  )
 }
-
-export default App;
